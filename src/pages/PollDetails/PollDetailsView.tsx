@@ -135,7 +135,7 @@ class PollDetailsView extends Component<Props, State> {
       return null;
     }
     return <>
-      <h2>New candidate</h2>
+      <h2>Write-in candidate</h2>
       <WriteInSubmitter
         poll = {this.props.poll}
         onNewCandidate = {(c: Candidate) => this.handleSubmitNewCandidate(c)}

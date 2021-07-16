@@ -65,7 +65,7 @@ class CreateBallot extends Component<Props, State> {
               onClick={() => this.handleSubmit()}
               className="submit-button"
             >
-              Submit
+              Vote
           </Button>
         }
       </Card>

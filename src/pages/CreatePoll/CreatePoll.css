@@ -14,3 +14,7 @@
   width: 100%;
   margin: 0.5em;
 }
+
+.CreatePollForm ul {
+  margin-bottom: 0;
+}

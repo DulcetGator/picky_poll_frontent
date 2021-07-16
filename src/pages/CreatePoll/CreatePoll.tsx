@@ -1,6 +1,6 @@
 import React, { Component, Context, ReactNode } from 'react';
 import {
-  Button, Col, Form, FormControl, InputGroup, Row,
+  Alert, Button, Col, Form, FormControl, InputGroup, Row,
 } from 'react-bootstrap';
 import { createPoll } from '../../api';
 import ExampleCreator from './ExampleCreator'
@@ -24,6 +24,7 @@ type State = {
     writeIns: boolean
   },
   offerExample: boolean,
+  validationErrors: null | string[]
 };
 
 function newCandidate() {
@@ -50,22 +51,30 @@ export default class CreatePoll extends Component<Props, State> {
       configuration: {
         writeIns: false,
       },
-      offerExample: true
+      offerExample: true,
+      validationErrors: null,
     };
   }
 
-  isValid(): boolean {
+  validationErrors(): string[] {
     const candidateNames = this.state.candidates
       .map((c) => c.candidate.name)
-      .filter((c) => c.length > 0);
-    const hasDuplicates = new Set(candidateNames).size
-      < candidateNames.length;
-    
-    const isCompetitive = candidateNames.length >=2 || this.state.configuration.writeIns
-
-    return this.state.name.length > 0
-      && isCompetitive
-      && !hasDuplicates;
+      .filter((c) => c.trim().length > 0);
+    return [
+      {
+        msg: 'Provide a poll name.',
+        fail: this.state.name.trim().length === 0,
+      },
+      {
+        msg: 'Provide at least two candidates, or enable write-ins.',
+        fail: candidateNames.length < 2 && (!this.state.configuration.writeIns)
+      },
+      {
+        msg: 'Remove candidates with duplicated names.',
+        fail: new Set(candidateNames).size < candidateNames.length
+      }
+    ].filter(v => v.fail)
+    .map(v => v.msg);
   }
 
   render(): ReactNode {
@@ -134,14 +143,14 @@ export default class CreatePoll extends Component<Props, State> {
               <Button
                 variant="primary"
                 type="submit"
-                disabled={!this.isValid()}
               >
                 Create
               </Button>
             </div>
-            <div>
-            </div>
           </div>
+          {
+            this.validationErrorsSection()
+          }
         </form>
         <FadeToggle show={this.state.offerExample}>
           Just testing it out? An example poll can be generated for you.
@@ -179,19 +188,43 @@ export default class CreatePoll extends Component<Props, State> {
   private async handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
 
+    const errors = this.validationErrors();
+    if (errors.length > 0) {
+      this.setState({
+        validationErrors: errors
+      });
+      return;
+    }
+
     const poll = await createPoll(
       this.context.getKey(),
       this.state.name,
       this.state.description,
       this.state.candidates
         .map(c => c.candidate)
-        .filter((c) => c.name.length > 0),
+        .filter((c) => c.name.trim().length > 0),
       this.state.configuration
     );
 
     this.context.addKnownPoll(poll, true);
 
     this.props.onCreatePoll(poll);
+  }
+
+  private validationErrorsSection() {
+    if (!this.state.validationErrors) {
+      return null;
+    } else {
+      return <Alert variant="danger">
+        <ul>
+          {this.state.validationErrors.map(m =>
+            <li>
+              {m}
+            </li>
+          )}
+        </ul>
+      </Alert>;
+    }
   }
 
   private handleCandidateNameChange(index: number, newName: string): void {

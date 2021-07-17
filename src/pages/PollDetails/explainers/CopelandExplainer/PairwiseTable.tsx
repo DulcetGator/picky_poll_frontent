@@ -61,7 +61,7 @@ export default function PairwiseTable(props: Props) {
     const remainderRows = stage.candidates.slice(1).map((candidate) =>
       candidateRow(candidate.candidate, candidate.wins)
     )
-    return [firstRow, remainderRows]
+    return [firstRow, ...remainderRows]
   })
   return (
     <Table size="sm" responsive={true}>

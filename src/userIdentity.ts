@@ -5,7 +5,6 @@ import crypto from 'crypto';
 export type KnownPoll = {
     poll: Poll,
     isMine: boolean,
-    isHidden: boolean,
     knownBallots: string[]
 }
 
@@ -23,7 +22,7 @@ export interface IdentityService {
     addKnownPoll(poll: Poll, isMine: boolean): void,
     addKnownBallot(pollId: string, ballotId: string): void,
 
-    hidePoll(pollId: string): void
+    removePoll(pollId: string): void
 }
 
 export class LocalStoreIdentityService implements IdentityService {
@@ -78,10 +77,10 @@ export class LocalStoreIdentityService implements IdentityService {
     const identity = this._getIdentity();
     const desiredIndex = identity.knownPolls.findIndex((p) => p.poll.id >= poll.id);
     if (desiredIndex > -1 && identity.knownPolls[desiredIndex].poll.id === poll.id) {
-      this.mutateKnownPoll(poll.id, (p) => p.isHidden = false);
+      this.mutateKnownPoll(poll.id, (p) => Object.assign(p, poll));
     } else {
       const newPoll: KnownPoll = {
-        poll, isMine, isHidden: false, knownBallots: [],
+        poll, isMine, knownBallots: [],
       };
       if (desiredIndex < 0) {
         identity.knownPolls = identity.knownPolls.concat([newPoll]);
@@ -98,8 +97,13 @@ export class LocalStoreIdentityService implements IdentityService {
     });
   }
 
-  hidePoll(pollId: string): void {
-    this.mutateKnownPoll(pollId, (p) => p.isHidden = true);
+  removePoll(pollId: string): void {
+    const identity = this._getIdentity();
+    const pollIndex = identity.knownPolls.findIndex((p) => p.poll.id === pollId);
+    if (pollIndex >=0 ) {
+      identity.knownPolls.splice(pollIndex, 1);
+    }
+    this._setIdentity(identity);
   }
 
   mutateKnownPoll(pollId: string, mutator: (kp: KnownPoll) => void): void {

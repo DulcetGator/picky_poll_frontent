@@ -23,7 +23,7 @@ export default function About() {
                 Invite your acquaintances to vote by sharing the poll's secret URL.
               </li>
               <li>
-                Voters rank choices by order of preference, then submit their ballot.
+                Voters only have to provide a name for their ballot, and their preference rankings.
               </li>
             </ul>
           </Card>
@@ -61,7 +61,7 @@ export default function About() {
         <div className="card-wrapper">
           <Card>
             <Card.Title>
-              Secure...?
+              Secure
             </Card.Title>
             <ul>
               <li>
@@ -70,17 +70,21 @@ export default function About() {
               <li>
                 Neither poll creators nor voters can cheat.
               </li>
-              <li>
-                Picky Poll does not require authentication, so somebody with a poll's secret URL
-                could submit multiple ballots. Everyone can see when this happens, but not who did
-                it. If this happens, you may need to use a website that makes voters authenticate.
-              </li>
             </ul>
           </Card>
         </div>
       </div>
+      <h2>Caveat</h2>
+      <div>
+        <p>
+          Because Picky Poll does not have registration, it's very convenient to create or vote in a poll.
+          However, if someone with the poll's secret URL is malicious, they could be a nuisance by submitting multiple
+          ballots. Everyone can detect this when reviewing the ballots, but if this happens, you may need to use a
+          website which supports authentication.
+        </p>
+      </div>
       <div className="suitable-for-text">
-        Suitable for:
+        <h3>Suitable for:</h3>
         <ul>
           <li>
             Game groups picking which board game to play next Saturday.
@@ -90,7 +94,7 @@ export default function About() {
           </li>
         </ul>
 
-        Unsuitable for:
+        <h3>Unsuitable for:</h3>
         <ul>
           <li>
             Uses requiring secret ballots
@@ -100,7 +104,7 @@ export default function About() {
           </li>
           <li>
             Polls with large numbers of voters, which might include someone malicious.
-            They can't rig the poll undetected, but they could force you to abandon it.
+            They can't cheat the poll undetected, but they could force you to abandon it.
           </li>
         </ul>
       </div>

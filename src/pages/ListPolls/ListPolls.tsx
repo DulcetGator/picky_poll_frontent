@@ -24,7 +24,7 @@ export default class ListPolls extends Component<Props, State> {
   }
 
   componentDidMount(): void {
-    const knownPolls = this.context.getKnownPolls().filter((p) => !p.isHidden);
+    const knownPolls = this.context.getKnownPolls();
     const sorted = knownPolls
       .sort((a, b) => a.poll.expires.localeCompare(b.poll.expires))
       .reverse();
@@ -38,7 +38,7 @@ export default class ListPolls extends Component<Props, State> {
   }
 
   private handleRemove(kp: KnownPoll) {
-    this.context.hidePoll(kp.poll.id);
+    this.context.removePoll(kp.poll.id);
     const [myPolls, seenPolls] = [this.state.myPolls, this.state.seenPolls].map((pollList) => {
       const index = pollList.indexOf(kp);
       if (index >= 0) {

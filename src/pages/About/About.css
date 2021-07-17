@@ -37,6 +37,10 @@
   text-align: left;
 }
 
+.About p {
+  text-align: left;
+}
+
 .About .suitable-for-text {
   margin: auto;
   max-width: 50em;
